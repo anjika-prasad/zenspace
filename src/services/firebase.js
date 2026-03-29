@@ -3,13 +3,12 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA689NihIVNCrz719MC5ddPGWW8-qnsSbo",
-  authDomain: "zenspace-1f324.firebaseapp.com",
-  projectId: "zenspace-1f324",
-  storageBucket: "zenspace-1f324.firebasestorage.app",
-  messagingSenderId: "148476777772",
-  appId: "1:148476777772:web:5faf327ce471197f768889",
-  measurementId: "G-91KHP3L1S1"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);
