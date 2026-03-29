@@ -5,7 +5,7 @@ import LofiGirl from "../components/LofiGirl";
 function Home({user}) {
   return (
     <div className="home-container">
-      {user && <p>Logged in as: {user.email}</p>}
+      {user && <p>Logged in as: {user.email}!!!!</p>}
 
 
       {/* Floating Blobs */}
@@ -52,6 +52,7 @@ function Home({user}) {
           <h3>📚 Study Rooms</h3>
           <p>Virtual co-study with accountability.</p>
         </div>
+        <p>Made by Anjika</p>
       </section>
 
       {/* WAVE */}
