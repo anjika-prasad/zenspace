@@ -290,7 +290,7 @@ function Pomodoro() {
     <iframe
       src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8NTLI2TtZa6"
       width="100%"
-      height="200"
+      height="80"
       allow="autoplay"
     ></iframe>
   )}
