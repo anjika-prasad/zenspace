@@ -4,6 +4,7 @@ import { auth } from "./services/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import emailjs from "emailjs-com";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -14,13 +15,50 @@ import Analytics from "./pages/Analytics";
 import StudyRooms from "./pages/StudyRooms";
 
 function App() {
-  // ✅ LIFT TASK STATE HERE
   const [tasks, setTasks] = useState(
     JSON.parse(localStorage.getItem("tasks")) || []
   );
 
   const [user, setUser] = useState(null);
 
+  // 🔥 SEND EMAIL
+  const sendReminder = (taskText, userEmail) => {
+    emailjs.send(
+      "service_only2uu",
+      "template_xlklvnk",
+      {
+        task: taskText,
+        to_email: userEmail,
+      },
+      "dd3zU3MT6J7FRNlKf" 
+    );
+  };
+
+  // 🔥 CHECK TASKS FOR REMINDERS
+  useEffect(() => {
+    if (!auth.currentUser) return;
+
+    const today = new Date().toISOString().split("T")[0];
+
+    tasks.forEach((t) => {
+      if (
+        t.priority === "High" &&
+        t.dueDate === today &&
+        !t.reminded
+      ) {
+        sendReminder(t.text, auth.currentUser.email);
+
+        // ✅ update state properly
+        setTasks((prev) =>
+          prev.map((task) =>
+            task.id === t.id ? { ...task, reminded: true } : task
+          )
+        );
+      }
+    });
+  }, [tasks]);
+
+  // AOS
   useEffect(() => {
     AOS.init({
       duration: 1000,
@@ -28,18 +66,19 @@ function App() {
     });
   }, []);
 
-  // ✅ Keep localStorage synced
+  // localStorage sync
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
+  // auth listener
   useEffect(() => {
-  const unsub = onAuthStateChanged(auth, (currentUser) => {
-    setUser(currentUser);
-  });
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
 
-  return () => unsub();
-}, []);
+    return () => unsub();
+  }, []);
 
   return (
     <Router>
@@ -49,17 +88,16 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/pomodoro" element={<Pomodoro />} />
 
-        {/* Pass tasks as props */}
         <Route
           path="/tasks"
           element={<TaskManager tasks={tasks} setTasks={setTasks} />}
         />
 
-        {/* Analytics page */}
         <Route
           path="/analytics"
           element={<Analytics tasks={tasks} />}
         />
+
         <Route path="/rooms" element={<StudyRooms />} />
       </Routes>
     </Router>
