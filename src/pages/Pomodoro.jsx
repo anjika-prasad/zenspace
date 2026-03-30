@@ -297,34 +297,34 @@ function Pomodoro() {
 </div>
 
         {/* 💬 CHAT */}
-        <div className="chat-panel">
-          <h3>Room Chat</h3>
+        {room && (
+  <div className="chat-panel">
+    <h3>Room Chat</h3>
 
-          <div className="chat-messages">
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`chat-message ${
-                  msg.user === auth.currentUser?.email
-                    ? "you"
-                    : "other"
-                }`}
-              >
-                <strong>{msg.user}</strong>: {msg.text}
-              </div>
-            ))}
-          </div>
-
-          <div className="chat-input">
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message..."
-              onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-            />
-            <button onClick={sendMessage}>Send</button>
-          </div>
+    <div className="chat-messages">
+      {messages.map((msg) => (
+        <div
+          key={msg.id}
+          className={`chat-message ${
+            msg.user === auth.currentUser?.email ? "you" : "other"
+          }`}
+        >
+          <strong>{msg.user}</strong>: {msg.text}
         </div>
+      ))}
+    </div>
+
+    <div className="chat-input">
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        placeholder="Type a message..."
+        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+      />
+      <button onClick={sendMessage}>Send</button>
+    </div>
+  </div>
+)}
       </div>
     </div>
   );
