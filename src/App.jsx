@@ -36,27 +36,28 @@ function App() {
 
   // 🔥 CHECK TASKS FOR REMINDERS
   useEffect(() => {
-    if (!auth.currentUser) return;
+  if (!user || tasks.length === 0) return;
 
-    const today = new Date().toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
 
-    tasks.forEach((t) => {
-      if (
-        t.priority === "High" &&
-        t.dueDate === today &&
-        !t.reminded
-      ) {
-        sendReminder(t.text, auth.currentUser.email);
+  tasks.forEach((t) => {
+    if (
+      t.priority === "High" &&
+      t.dueDate === today &&
+      !t.reminded
+    ) {
+      console.log("Triggering email for:", t.text);
 
-        // ✅ update state properly
-        setTasks((prev) =>
-          prev.map((task) =>
-            task.id === t.id ? { ...task, reminded: true } : task
-          )
-        );
-      }
-    });
-  }, [tasks]);
+      sendReminder(t.text, user.email);
+
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === t.id ? { ...task, reminded: true } : task
+        )
+      );
+    }
+  });
+}, [tasks, user]);
 
   // AOS
   useEffect(() => {
