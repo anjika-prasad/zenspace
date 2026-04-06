@@ -52,7 +52,6 @@ function Home({user}) {
           <h3>📚 Study Rooms</h3>
           <p>Virtual co-study with accountability.</p>
         </div>
-        <p>Made by Anjika</p>
       </section>
 
       {/* WAVE */}
