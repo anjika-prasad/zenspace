@@ -41,10 +41,10 @@ function Pomodoro() {
   const location = useLocation();
   const room = location.state?.room;
 
-  // 🔥 ROOM ID
+  // ✅ ROOM ID
   const roomId = room?.name?.replace(/\s/g, "") || "global";
 
-  // 🔥 Focus time
+  // ✅ Focus time per room
   let focusMinutes = 25;
   if (room?.name === "Exam Mode") focusMinutes = 50;
   if (room?.name === "Silent Library") focusMinutes = 45;
@@ -107,19 +107,15 @@ function Pomodoro() {
     setInput("");
   };
 
-  // 👥 USER PRESENCE (IMPORTANT FOR STUDYROOMS COUNT)
+  // 👥 USER PRESENCE
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) return;
 
     const userRef = doc(db, "rooms", roomId, "users", user.uid);
 
-    // JOIN
-    setDoc(userRef, {
-      email: user.email,
-    });
+    setDoc(userRef, { email: user.email });
 
-    // LEAVE
     return () => {
       deleteDoc(userRef);
     };
@@ -149,29 +145,6 @@ function Pomodoro() {
         setWeeklyData(updatedWeekly);
         localStorage.setItem("weeklyData", JSON.stringify(updatedWeekly));
 
-        const today = new Date().toDateString();
-
-        if (lastDate) {
-          const yesterday = new Date();
-          yesterday.setDate(yesterday.getDate() - 1);
-
-          if (today === lastDate) {
-          } else if (lastDate === yesterday.toDateString()) {
-            const newStreak = streak + 1;
-            setStreak(newStreak);
-            localStorage.setItem("streak", newStreak);
-          } else {
-            setStreak(1);
-            localStorage.setItem("streak", 1);
-          }
-        } else {
-          setStreak(1);
-          localStorage.setItem("streak", 1);
-        }
-
-        localStorage.setItem("lastDate", today);
-        setLastDate(today);
-
         setIsBreak(true);
         setTimeLeft(BREAK_TIME);
       } else {
@@ -200,11 +173,14 @@ function Pomodoro() {
     circumference - (progress / 100) * circumference;
 
   return (
-    <div className={`pomodoro-container`}>
+    // ✅ THIS IS THE IMPORTANT FIX
+    <div className={`pomodoro-container ${room?.name?.replace(/\s/g, "") || ""}`}>
+      
       <div className="pomodoro-card">
         <h2>
           {room?.name ? `${room.name} Room` : "Focus Session"}
         </h2>
+
         <h3>{isBreak ? "Break Time" : "Focus Time"}</h3>
 
         {/* TIMER */}
@@ -264,67 +240,59 @@ function Pomodoro() {
             }}
           />
         </div>
-        {/* 🎧 MUSIC PLAYER */}
-<div className="music-player">
-  {room?.name === "Lofi Cafe" && (
-    <iframe
-      src="https://www.youtube.com/embed/jfKfPfyJRdk"
-      title="Lofi Music"
-      width="100%"
-      height="200"
-      allow="autoplay"
-    ></iframe>
-  )}
 
-  {room?.name === "Silent Library" && (
-    <iframe
-      src="https://www.youtube.com/embed/mPZkdNFkNps"
-      title="Rain Sounds"
-      width="100%"
-      height="200"
-      allow="autoplay"
-    ></iframe>
-  )}
+        {/* 🎧 MUSIC */}
+        <div className="music-player">
+          {room?.name === "Lofi Cafe" && (
+            <iframe
+              src="https://www.youtube.com/embed/jfKfPfyJRdk"
+              width="100%"
+              height="200"
+              allow="autoplay"
+            ></iframe>
+          )}
 
-  {!room && (
-    <iframe
-      src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8NTLI2TtZa6"
-      width="100%"
-      height="80"
-      allow="autoplay"
-    ></iframe>
-  )}
-</div>
-
-        {/* 💬 CHAT */}
-        {room && (
-  <div className="chat-panel">
-    <h3>Room Chat</h3>
-
-    <div className="chat-messages">
-      {messages.map((msg) => (
-        <div
-          key={msg.id}
-          className={`chat-message ${
-            msg.user === auth.currentUser?.email ? "you" : "other"
-          }`}
-        >
-          <strong>{msg.user}</strong>: {msg.text}
+          {room?.name === "Silent Library" && (
+            <iframe
+              src="https://www.youtube.com/embed/mPZkdNFkNps"
+              width="100%"
+              height="200"
+              allow="autoplay"
+            ></iframe>
+          )}
         </div>
-      ))}
-    </div>
 
-    <div className="chat-input">
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type a message..."
-        onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-      />
-      <button onClick={sendMessage}>Send</button>
-    </div>
-  </div>
-)}
+        {/* 💬 CHAT (ONLY IN ROOMS) */}
+        {room && (
+          <div className="chat-panel">
+            <h3>Room Chat</h3>
+
+            <div className="chat-messages">
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`chat-message ${
+                    msg.user === auth.currentUser?.email
+                      ? "you"
+                      : "other"
+                  }`}
+                >
+                  <strong>{msg.user}</strong>: {msg.text}
+                </div>
+              ))}
+            </div>
+
+            <div className="chat-input">
+              <input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type a message..."
+                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+              />
+              <button onClick={sendMessage}>Send</button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

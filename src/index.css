@@ -52,6 +52,7 @@ body {
   color: #5c3d99;
 }
 
+
 /* Hero Section */
 .hero {
   min-height: 90vh;
@@ -304,6 +305,7 @@ body {
   text-align: center;
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
 }
+
 
 .timer {
   font-size: 4rem;
@@ -680,7 +682,7 @@ body {
 
 /* Silent Library */
 .SilentLibrary {
-  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  background: linear-gradient(135deg, #134e4a, #4ade80);
 }
 
 /* Lofi Cafe */
