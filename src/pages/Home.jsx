@@ -5,8 +5,6 @@ import LofiGirl from "../components/LofiGirl";
 function Home({user}) {
   return (
     <div className="home-container">
-      {user && <p>Logged in as: {user.email}!!!!</p>}
-
 
       {/* Floating Blobs */}
       <div className="blob blob1"></div>
